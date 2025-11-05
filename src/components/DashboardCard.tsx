@@ -1,16 +1,15 @@
 "use client";
 
 import React from "react";
+import { CardProps } from "@/types/types";
 
-type Props = {
-  title: string;
-  value: string;
-  subtitle?: string;
-  icon?: React.ReactNode;
-  color?: string;
-};
-
-export default function DashboardCard({ title, value, subtitle, icon, color }: Props) {
+export default function DashboardCard({
+  title,
+  value,
+  subtitle,
+  icon,
+  color,
+}: CardProps) {
   const colorMap: Record<string, string> = {
     green: "bg-green-100 text-green-600",
     blue: "bg-blue-100 text-blue-600",
@@ -29,7 +28,9 @@ export default function DashboardCard({ title, value, subtitle, icon, color }: P
           {icon}
         </div>
       </div>
-      <h3 className="text-2xl font-bold text-gray-900 dark:text-white">{value}</h3>
+      <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
+        {value}
+      </h3>
       <p className="text-gray-600 dark:text-gray-400 text-sm">{title}</p>
       {subtitle && <p className="text-xs text-gray-400 mt-1">{subtitle}</p>}
     </div>

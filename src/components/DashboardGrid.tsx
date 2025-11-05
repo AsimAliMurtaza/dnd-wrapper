@@ -6,6 +6,7 @@ import DraggableWrapper from "@/components/DraggableWrapper";
 import { DollarSign, Users, Activity, BarChart } from "lucide-react";
 
 export default function DashboardGrid() {
+  //dummy card data for demonstration
   const cards = [
     { id: "revenue", title: "Revenue", value: "$12,340", icon: <DollarSign /> },
     { id: "users", title: "Active Users", value: "2,145", icon: <Users /> },
@@ -30,11 +31,13 @@ export default function DashboardGrid() {
   ];
 
   return (
+    // wrap the grid in DraggableWrapper to enable drag-and-drop
     <DraggableWrapper
       items={cards.map((c) => c.id)}
       renderItem={(id) => {
         const card = cards.find((c) => c.id === id)!;
         return (
+            // render each DashboardCard based on its id
           <DashboardCard
             title={card.title}
             value={card.value}
@@ -43,7 +46,8 @@ export default function DashboardGrid() {
           />
         );
       }}
-      onReorder={(order) => console.log("New order:", order)}
+      //optional callback on reorder
+      //onReorder={(order) => console.log("New order:", order)}
     />
   );
 }

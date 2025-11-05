@@ -15,12 +15,7 @@ import {
   useSortable,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-
-type DraggableWrapperProps = {
-  items: string[];
-  onReorder?: (newOrder: string[]) => void;
-  renderItem: (id: string) => React.ReactNode;
-};
+import { DraggableWrapperProps } from "@/types/types";
 
 export default function DraggableWrapper({
   items,
@@ -30,6 +25,7 @@ export default function DraggableWrapper({
   const [activeItems, setActiveItems] = useState(items);
   const sensors = useSensors(useSensor(PointerSensor));
 
+  //for persisting layout in localStorage for now
   useEffect(() => {
     const saved = localStorage.getItem("dashboardLayout");
     if (saved) setActiveItems(JSON.parse(saved));
@@ -39,6 +35,7 @@ export default function DraggableWrapper({
     localStorage.setItem("dashboardLayout", JSON.stringify(activeItems));
   }, [activeItems]);
 
+  //handle drag end event
   const handleDragEnd = (event: any) => {
     const { active, over } = event;
     if (active.id !== over?.id) {
@@ -69,6 +66,9 @@ export default function DraggableWrapper({
   );
 }
 
+/** this function makes each item sortable using useSortable hook.
+ *  i removed motion.div for simplicity. custom animation can be
+ * added in the return( <motion.div>animations logic</motion.div>) with framer-motion */
 function SortableItem({
   id,
   children,
