@@ -7,6 +7,7 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
+  DragEndEvent,
 } from "@dnd-kit/core";
 import {
   arrayMove,
@@ -36,11 +37,11 @@ export default function DraggableWrapper({
   }, [activeItems]);
 
   //handle drag end event
-  const handleDragEnd = (event: any) => {
+  const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     if (active.id !== over?.id) {
-      const oldIndex = activeItems.indexOf(active.id);
-      const newIndex = activeItems.indexOf(over.id);
+      const oldIndex = activeItems.indexOf(active.id as string);
+      const newIndex = activeItems.indexOf(over?.id as string);
       const newOrder = arrayMove(activeItems, oldIndex, newIndex);
       setActiveItems(newOrder);
       onReorder?.(newOrder);
