@@ -24,22 +24,21 @@ const DraggableResizableGrid: React.FC<GridProps> = ({
 }) => {
   const [layout, setLayout] = useState<Layout[]>(initialLayout);
 
-  // Load layout from localStorage
-  useEffect(() => {
-    const saved = localStorage.getItem(storageKey);
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        setLayout(parsed);
-      } catch {
-        console.warn("Invalid saved layout, using defaults");
-      }
-    }
-  }, [storageKey]);
-
   const handleLayoutChange = (newLayout: Layout[]) => {
     setLayout(newLayout);
-    localStorage.setItem(storageKey, JSON.stringify(newLayout));
+    (async () => {
+      try {
+        await fetch(`/api/layout`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ layout: newLayout }),
+        });
+      } catch (error) {
+        console.error("Failed to save layout config:", error);
+      }
+    })();
   };
 
   return (

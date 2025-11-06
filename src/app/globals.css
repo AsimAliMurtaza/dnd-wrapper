@@ -25,3 +25,9 @@ body {
     text-wrap: balance;
   }
 }
+
+.react-grid-item.react-grid-placeholder {
+  background: transparent !important;
+  border: 2px #14b8a6; 
+  opacity: 0.3; 
+}
