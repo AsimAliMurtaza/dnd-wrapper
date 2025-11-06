@@ -18,7 +18,7 @@ export default function DashboardCard({
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-sm hover:shadow-md transition-all">
+    <div className="bg-white dark:bg-gray-800 p-5 rounded-2xl  transition-all">
       <div className="flex items-center justify-between mb-3">
         <div
           className={`w-10 h-10 rounded-xl flex items-center justify-center ${

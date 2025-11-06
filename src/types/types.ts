@@ -7,7 +7,10 @@ export type CardProps = {
 };
 
 export type DraggableWrapperProps = {
-  items: string[];
-  onReorder?: (newOrder: string[]) => void;
+  items: string[]; 
   renderItem: (id: string) => React.ReactNode;
+  onReorder?: (newOrder: string[]) => void;
+  storageKey?: string; 
+  gridClassName?: string; 
 };
+

@@ -29,6 +29,7 @@ export default function DraggableWrapper({
   //for persisting layout in localStorage for now
   useEffect(() => {
     const saved = localStorage.getItem("dashboardLayout");
+    console.log("loaded layout", saved);
     if (saved) setActiveItems(JSON.parse(saved));
   }, []);
 
