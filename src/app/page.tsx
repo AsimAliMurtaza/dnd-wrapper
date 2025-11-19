@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 
 export default function DashboardPage() {
   const [initialLayout, setInitialLayout] = useState<any[]>([]);
+  const [editMode, setEditMode] = useState(false);
 
   useEffect(() => {
     const fetchLayout = async () => {
@@ -100,6 +101,7 @@ export default function DashboardPage() {
       <DraggableResizableGrid
         initialLayout={initialLayout}
         renderItem={renderElement}
+        initialMode={editMode}
         storageKey={"dashboard-layout"}
       />
     </div>

@@ -1,0 +1,131 @@
+flowchart TB
+    %% Frontend Layer
+    subgraph "Frontend Layer"
+        direction TB
+        Browser(["Browser (User)"]):::frontend
+        NextUI(["Next.js UI (src/app)"]):::frontend
+        StateStore(["Zustand Store"]):::frontend
+        Components(["React Components (src/components)"]):::frontend
+        Browser -->|"HTTP" | NextUI
+        NextUI -->|"State"| StateStore
+    end
+    click NextUI "https://github.com/asimalimurtaza/cognivia/tree/main/src/app"
+    click Components "https://github.com/asimalimurtaza/cognivia/tree/main/src/components"
+
+    subgraph "Role-Based Dashboards"
+        direction TB
+        StudentDash(["Student Dashboard"]):::frontend
+        TeacherDash(["Teacher Dashboard"]):::frontend
+        AdminDash(["Admin Dashboard"]):::frontend
+        NextUI --> StudentDash
+        NextUI --> TeacherDash
+        NextUI --> AdminDash
+    end
+    click StudentDash "https://github.com/asimalimurtaza/cognivia/tree/main/src/app/dashboard"
+    click TeacherDash "https://github.com/asimalimurtaza/cognivia/tree/main/src/app/teacher"
+    click AdminDash "https://github.com/asimalimurtaza/cognivia/tree/main/src/app/admin"
+
+    %% Next.js Backend/API
+    subgraph "Next.js API Routes" 
+        direction TB
+        API_Routes(["API Routes (src/app/api)"]):::backend
+        AuthRoute(["NextAuth Route"]):::backend
+        QuizGenProxy(["Quiz Generation Proxy"]):::backend
+        NoteGenProxy(["Note Generation Proxy"]):::backend
+        AssignRoutes(["Assignments CRUD/Submit"]):::backend
+        CourseRoutes(["Courses Endpoints"]):::backend
+        LambdaProxy(["Other Proxies & CRUD Routes"]):::backend
+        API_Routes --> AuthRoute
+        API_Routes --> QuizGenProxy
+        API_Routes --> NoteGenProxy
+        API_Routes --> AssignRoutes
+        API_Routes --> CourseRoutes
+        API_Routes --> LambdaProxy
+    end
+    click API_Routes "https://github.com/asimalimurtaza/cognivia/tree/main/src/app/api"
+    click AuthRoute "https://github.com/asimalimurtaza/cognivia/blob/main/src/app/api/auth/[...nextauth]/route.ts"
+    click QuizGenProxy "https://github.com/asimalimurtaza/cognivia/blob/main/src/app/api/generate-quiz/route.ts"
+    click NoteGenProxy "https://github.com/asimalimurtaza/cognivia/blob/main/src/app/api/generate-note/route.ts"
+    click AssignRoutes "https://github.com/asimalimurtaza/cognivia/blob/main/src/app/api/assignments/route.ts"
+    click CourseRoutes "https://github.com/asimalimurtaza/cognivia/blob/main/src/app/api/courses/route.ts"
+
+    %% API Gateway
+    API_GW(["AWS API Gateway"]):::apiGw
+
+    %% AWS Lambda Layer
+    subgraph "AWS Lambdas"
+        direction TB
+        AssignLambda(["Assignments Lambda"]):::lambda
+        CoursesLambda(["Courses CRUD Lambda"]):::lambda
+        GeminiLambda(["Gemini AI Lambda"]):::lambda
+        NotesLambda(["Notes Fetch Lambda"]):::lambda
+        QuizzesLambda(["Quizzes Fetch Lambda"]):::lambda
+        QuizResultsLambda(["Quiz Results Lambda"]):::lambda
+    end
+    click AssignLambda "https://github.com/asimalimurtaza/cognivia/blob/main/src/lambda/assignments-lambda/index.mjs"
+    click CoursesLambda "https://github.com/asimalimurtaza/cognivia/blob/main/src/lambda/courses-crud-lambda/index.mjs"
+    click GeminiLambda "https://github.com/asimalimurtaza/cognivia/blob/main/src/lambda/gemini-lambda/index.mjs"
+    click NotesLambda "https://github.com/asimalimurtaza/cognivia/blob/main/src/lambda/notes-fetch-lambda/index.mjs"
+    click QuizzesLambda "https://github.com/asimalimurtaza/cognivia/blob/main/src/lambda/quizzes-fetch-lambda/index.mjs"
+    click QuizResultsLambda "https://github.com/asimalimurtaza/cognivia/blob/main/src/lambda/quiz-results-lambda/index.mjs"
+
+    %% Data & Storage
+    subgraph "Data & Storage"
+        direction TB
+        MongoDB(["MongoDB Atlas"]):::db
+        Redis(["Upstash Redis"]):::db
+        S3Bucket(["AWS S3"]):::storage
+        FirebaseStorage(["Firebase Storage"]):::external
+    end
+
+    %% External Services
+    subgraph "External Services"
+        direction TB
+        GeminiAPI(["Google Gemini API"]):::external
+        StripeAPI(["Stripe"]):::external
+        AgoraAPI(["Agora SDK"]):::external
+        Mailer(["Nodemailer SMTP"]):::external
+    end
+
+    %% Data flow arrows
+    NextUI -->|"GET/POST /api/*"| API_Routes
+    API_Routes -->|"Proxy"| API_GW
+    API_GW -->|"Invoke"| AssignLambda
+    API_GW -->|"Invoke"| CoursesLambda
+    API_GW -->|"Invoke"| GeminiLambda
+    API_GW -->|"Invoke"| NotesLambda
+    API_GW -->|"Invoke"| QuizzesLambda
+    API_GW -->|"Invoke"| QuizResultsLambda
+
+    AssignLambda -->|"MongoDB CRUD"| MongoDB
+    CoursesLambda -->|"MongoDB CRUD"| MongoDB
+    GeminiLambda -->|"REST"| GeminiAPI
+    GeminiLambda -->|"Write"| MongoDB
+    NotesLambda -->|"MongoDB CRUD"| MongoDB
+    QuizzesLambda -->|"MongoDB CRUD"| MongoDB
+    QuizResultsLambda -->|"MongoDB CRUD"| MongoDB
+
+    AssignLambda -->|"Upload"| S3Bucket
+    NextUI -->|"Direct"| FirebaseStorage
+
+    %% External payment & live classes proxies
+    API_Routes -->|"Proxy"| StripeAPI
+    API_Routes -->|"Proxy"| AgoraAPI
+    API_Routes -->|"Email"| Mailer
+
+    %% Utilities & Models click events
+    JWTAuth(["JWT Auth"]):::backend
+    click MongoDB "src/lib/mongodb.ts"
+    click S3Bucket "https://github.com/asimalimurtaza/cognivia/blob/main/src/lib/s3.ts"
+    click FirebaseStorage "https://github.com/asimalimurtaza/cognivia/blob/main/src/lib/firebase.ts"
+    click JWTAuth "src/lib/jwt.ts"
+    click Mailer "https://github.com/asimalimurtaza/cognivia/blob/main/src/lib/mailer.ts"
+
+    %% Styles
+    classDef frontend fill:#e0f7e9,stroke:#2e7d32,color:#2e7d32
+    classDef backend fill:#e3f2fd,stroke:#1565c0,color:#1565c0
+    classDef apiGw fill:#f3e5f5,stroke:#6a1b9a,color:#6a1b9a
+    classDef lambda fill:#fff3e0,stroke:#ef6c00,color:#e65100
+    classDef db fill:#e8eaf6,stroke:#303f9f,color:#303f9f
+    classDef storage fill:#fff8e1,stroke:#ff8f00,color:#ff6f00
+    classDef external fill:#f1f8e9,stroke:#558b2f,color:#558b2f
