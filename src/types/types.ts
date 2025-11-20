@@ -1,3 +1,5 @@
+import { Layouts } from "react-grid-layout";
+
 export type CardProps = {
   title: string;
   value: string;
@@ -13,3 +15,10 @@ export type DraggableWrapperProps = {
   storageKey?: string;
   gridClassName?: string;
 };
+
+export interface GridProps {
+  initialLayouts: Layouts;
+  renderItem: (id: string) => React.ReactNode;
+  breakpoints?: Record<string, number>;
+  cols?: Record<string, number>;
+}

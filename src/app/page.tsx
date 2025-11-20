@@ -4,23 +4,20 @@ import DraggableResizableGrid from "@/components/DraggableResizableGrid";
 import DashboardCard from "@/components/DashboardCard";
 import { DollarSign, Users, Activity, BarChart } from "lucide-react";
 import { useState, useEffect } from "react";
+import { Layouts } from "react-grid-layout";
+import { fetchLayoutFromServer } from "@/utils/api-functions";
 
 export default function DashboardPage() {
-  const [initialLayout, setInitialLayout] = useState<any[]>([]);
-  const [editMode, setEditMode] = useState(false);
+  const [initialLayout, setInitialLayout] = useState<Layouts>({});
+  const userId = 1;
 
   useEffect(() => {
-    const fetchLayout = async () => {
-      try {
-        const response = await fetch("/api/layout");
-        const data = await response.json();
-        console.log("Fetched layout:", data.layout);
-        setInitialLayout(data.layout);
-      } catch (error) {
-        console.error("Failed to load layout config:", error);
-      }
+    const loadLayout = async () => {
+      const layout = await fetchLayoutFromServer(userId);
+      console.log("Layout loaded in DashboardPage:", layout);
+      setInitialLayout(layout);
     };
-    fetchLayout();
+    loadLayout();
   }, []);
 
   const cards = [
@@ -49,28 +46,6 @@ export default function DashboardPage() {
     </div>
   );
 
-  // const initialLayout = [
-  //   { i: "revenue", x: 0, y: 0, w: 3, h: 2 },
-  //   { i: "users", x: 3, y: 0, w: 3, h: 2 },
-  //   { i: "engagement", x: 6, y: 0, w: 3, h: 2 },
-  //   { i: "sales", x: 9, y: 0, w: 3, h: 2 },
-  //   { i: "hero", x: 0, y: 2, w: 12, h: 2 },
-  // ];
-
-  // const renderCard = (id: string) => {
-  //   const card = cards.find((c) => c.id === id);
-  //   if (!card) return null;
-
-  //   return (
-  //     <DashboardCard
-  //       title={card.title}
-  //       value={card.value}
-  //       icon={card.icon}
-  //       color="teal"
-  //     />
-  //   );
-  // };
-
   const renderElement = (id: string) => {
     if (id === "hero") {
       return heroSection;
@@ -88,7 +63,7 @@ export default function DashboardPage() {
     );
   };
 
-  if (initialLayout.length === 0) {
+  if (Object.keys(initialLayout).length === 0) {
     return (
       <div className="flex items-center justify-center h-screen">
         Loading...
@@ -99,10 +74,8 @@ export default function DashboardPage() {
   return (
     <div className="w-full min-h-screen p-6 bg-gray-100 dark:bg-gray-900">
       <DraggableResizableGrid
-        initialLayout={initialLayout}
+        initialLayouts={initialLayout}
         renderItem={renderElement}
-        initialMode={editMode}
-        storageKey={"dashboard-layout"}
       />
     </div>
   );
